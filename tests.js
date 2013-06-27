@@ -1,8 +1,9 @@
 var assert = require('chai').assert
+var expect = require('chai').expect
 var original = require("./jsonpath-0.8.0.js");
 var newer = require("./jsonpath-caeost.js");
 
-var jsonObject = {x: "cat", z: "dog", y: {x: "horse", cat: "pilaf" array: [1,2,3,4,5,6]}, arr: [{dog: "meow"},{dog:"meow"},{dog:"cough"}]};
+var jsonObject = {x: "cat", z: "dog", y: {x: "horse", cat: "pilaf", array: [1,2,3,4,5,6]}, arr: [{dog: "meow"},{dog:"meow"},{dog:"cough"}]};
 
 var store = { "store": {
     "book": [ 
@@ -37,8 +38,8 @@ var store = { "store": {
 };
 
 describe('basic', function() {
-	it("matching responses", function(done) {
+	it("should have matching responses", function() {
 		var expression = "$..author";
-		original(store, expression) === newer(store, expression);
-	})
+		expect(original(store, expression)).to.equal(newer(store, expression));
+	});
 });
