@@ -3,9 +3,9 @@
  * Copyright (c) 2007 Stefan Goessner (goessner.net)
  * Licensed under the MIT (MIT-LICENSE.txt) licence.
  */
-function jsonPath(obj, expr, arg) {
+exports.jsonPath = function(obj, expr, options) {
    var P = {
-      resultType: arg && arg.resultType || "VALUE",
+      resultType: options && options.resultType || "VALUE",
       result: [],
       normalize: function(expr) {
          var subx = [];
@@ -82,6 +82,6 @@ function jsonPath(obj, expr, arg) {
    var $ = obj;
    if (expr && obj && (P.resultType == "VALUE" || P.resultType == "PATH")) {
       P.trace(P.normalize(expr).replace(/^\$;/,""), obj, "$");
-      return P.result.length ? P.result : false;
+      return P.result
    }
 } 
