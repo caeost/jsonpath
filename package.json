@@ -1,0 +1,20 @@
+{
+  "name": "jsonpath-test-write-thing",
+  "description": "",
+  "author": "",
+  "private": true,
+  "version": "0.0.1",
+
+  "devDependencies": {
+	"chai": "*",
+	"mocha": "*"
+  },
+
+  "scripts": {
+    "test": "mocha"
+  },
+
+  "engines": {
+    "node": "v0.8.x"
+  }
+}
