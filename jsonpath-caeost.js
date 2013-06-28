@@ -3,17 +3,13 @@
  * Copyright (c) 2007 Stefan Goessner (goessner.net)
  * Licensed under the MIT (MIT-LICENSE.txt) licence.
  */
-exports.jsonPath = function(obj, expr, options) {
+var jsonPath = function(obj, expr, options) {
    var P = {
       resultType: options && options.resultType || "VALUE",
       result: [],
       normalize: function(expr) {
-         var subx = [];
-         return expr.replace(/[\['](\??\(.*?\))[\]']/g, function($0,$1){return "[#"+(subx.push($1)-1)+"]";})
-                    .replace(/'?\.'?|\['?/g, ";")
-                    .replace(/;;;|;;/g, ";..;")
-                    .replace(/;$|'?\]|'$/g, "")
-                    .replace(/#([0-9]+)/g, function($0,$1){return subx[$1];});
+	var array = expr.match(/(\.\.+|[^\.\]\[]+)/g);
+	return array;
       },
       asPath: function(path) {
          var x = path.split(";"), p = "$";
@@ -27,15 +23,16 @@ exports.jsonPath = function(obj, expr, options) {
       },
       trace: function(expr, val, path) {
          if (expr) {
-            var x = expr.split(";"), loc = x.shift();
-            x = x.join(";");
+		console.log(expr)
+            var loc = expr.length ? expr.shift() : expr,
+            	x = expr;
             if (val && val.hasOwnProperty(loc))
                P.trace(x, val[loc], path + ";" + loc);
             else if (loc === "*")
                P.walk(loc, x, val, path, function(m,l,x,v,p) { P.trace(m+";"+x,v,p); });
             else if (loc === "..") {
                P.trace(x, val, path);
-               P.walk(loc, x, val, path, function(m,l,x,v,p) { typeof v[m] === "object" && P.trace("..;"+x,v[m],p+";"+m); });
+               P.walk(loc, x, val, path, function(m,l,x,v,p) { typeof v[m] === "object" && P.trace([".."].concat(x),v[m],p+";"+m); });
             }
             else if (/,/.test(loc)) { // [name1,name2,...]
                for (var s=loc.split(/'?,'?/),i=0,n=s.length; i<n; i++)
@@ -81,7 +78,11 @@ exports.jsonPath = function(obj, expr, options) {
 
    var $ = obj;
    if (expr && obj && (P.resultType == "VALUE" || P.resultType == "PATH")) {
-      P.trace(P.normalize(expr).replace(/^\$;/,""), obj, "$");
+      P.trace(P.normalize(expr.replace(/^\$/, "")), obj, "$");
       return P.result
    }
 } 
+
+if(exports) {
+	exports.jsonPath = jsonPath;
+}
